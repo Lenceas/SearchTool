@@ -15,4 +15,10 @@
     <PackageReference Include="NPOI" Version="2.5.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestQuestion.xls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

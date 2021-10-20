@@ -137,7 +137,7 @@ namespace SearchTool
                 var curTabDataTable = dataTableList[curSelectTabIndex];
                 if (curTabDataTable != null)
                 {
-                    var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable);
+                    var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable).Where(_ => _.type != null && _.item != null);
                     if (datas != null && datas.Any())
                     {
                         var newKeys = new List<string>();
@@ -158,23 +158,26 @@ namespace SearchTool
                             var newDatas = datas.Where(predicate);
                             if (newDatas != null && newDatas.Any())
                             {
-                                var resposeHtml = string.Empty;
-                                var splitStr = new string[0];
-                                foreach (var item in newDatas)
+                                if (newDatas != null && newDatas.Any())
                                 {
-                                    splitStr = item.item.Split("|");
-                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{item.id}】 - 【type:{item.type}】{Environment.NewLine}";
-                                    foreach (var sp in splitStr)
+                                    var resposeHtml = string.Empty;
+                                    var splitStr = new string[0];
+                                    foreach (var item in newDatas)
                                     {
-                                        if (string.IsNullOrEmpty(sp)) continue;
-                                        resposeHtml += $"{sp}{Environment.NewLine}";
+                                        splitStr = item.item.Split("|");
+                                        resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{item.id}】 - 【type:{item.type}】{Environment.NewLine}";
+                                        foreach (var sp in splitStr)
+                                        {
+                                            if (string.IsNullOrEmpty(sp)) continue;
+                                            resposeHtml += $"{sp}{Environment.NewLine}";
+                                        }
                                     }
-                                }
-                                richTextBox1.Text = resposeHtml;
-                                foreach (var newKey in newKeys)
-                                {
-                                    if (string.IsNullOrEmpty(newKey)) continue;
-                                    ChangeKeyColor(newKey, Color.Red);
+                                    richTextBox1.Text = resposeHtml;
+                                    foreach (var newKey in newKeys)
+                                    {
+                                        if (string.IsNullOrEmpty(newKey)) continue;
+                                        ChangeKeyColor(newKey, Color.Red);
+                                    }
                                 }
                             }
                         }
