@@ -61,6 +61,16 @@ namespace SearchTool
                         return;
                     }
 
+                    for (int i = 0; i < dataTableList.Count; i++)
+                    {
+                        loadText += $"{Environment.NewLine}{index}.加载{dataTableList[i].TableName}...";
+                        index++;
+                        richTextBox1.Text = loadText;
+                        TabPage tp = new TabPage($"tablePage{i + 1}");
+                        tp.Text = $"{dataTableList[i].TableName}";
+                        tabControl1.TabPages.Add(tp);
+                    }
+
                     loadText += $"{Environment.NewLine}{index}.初始化完成。{Environment.NewLine}请输入您要查询的信息，可按空格分隔，将以两个词并联搜索";
                     richTextBox1.Text = loadText;
                 }
@@ -106,7 +116,7 @@ namespace SearchTool
         private void Search()
         {
             // 重置文本
-            richTextBox1.Text = String.Empty;
+            richTextBox1.Text = string.Empty;
             // 当前搜索关键字
             var keys = textBox1.Text.Split(" ");
             // 当前选中tab索引
@@ -200,7 +210,9 @@ namespace SearchTool
         private void button2_Click(object sender, EventArgs e)
         {
             // 重置文本
-            richTextBox1.Text = String.Empty;
+            richTextBox1.Text = string.Empty;
+            Message msg = new Message();
+            msg.Show();
             // 当前选中tab索引
             var curSelectTabIndex = tabControl1.SelectedIndex;
             if (dataTableList != null && dataTableList.Any())
@@ -211,12 +223,61 @@ namespace SearchTool
                     var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable);
                     if (datas != null && datas.Any())
                     {
-                        const string HayStack = "中国香港………………";
-                        const string Needle = "中国香港 2013………………";
-
                         IAnalyser analyser = new SimHashAnalyser();
-                        var likeness = analyser.GetLikenessValue(Needle, HayStack);
-                        MessageBox.Show($"Likeness: {likeness * 100}% ");
+                        var likeness = 0.0;
+                        var resposeHtml = string.Empty;
+                        var excelModel1 = new ExcelModel();
+                        var excelModel2 = new ExcelModel();
+                        var splitStr1 = new string[0];
+                        var splitStr2 = new string[0];
+                        var newKeys = new List<string>();
+                        for (int i = 0; i < datas.Count; i++)
+                        {
+                            for (int j = i + 1; j < datas.Count; j++)
+                            {
+                                excelModel1 = datas[i];
+                                excelModel2 = datas[j];
+                                likeness = analyser.GetLikenessValue(excelModel1.item, excelModel2.item);
+                                if (likeness >= 0.9)
+                                {
+                                    newKeys.Add($"相似度{likeness * 100}%");
+                                    resposeHtml += $"=========相似度{likeness * 100}%=========";
+                                    splitStr1 = excelModel1.item.Split("|");
+                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{excelModel1.id}{excelModel1.type}{Environment.NewLine}";
+                                    foreach (var sp in splitStr1)
+                                    {
+                                        if (string.IsNullOrEmpty(sp)) continue;
+                                        resposeHtml += $"{sp}{Environment.NewLine}";
+                                    }
+
+                                    splitStr2 = excelModel2.item.Split("|");
+                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{excelModel2.id}{excelModel2.type}{Environment.NewLine}";
+                                    foreach (var sp in splitStr2)
+                                    {
+                                        if (string.IsNullOrEmpty(sp)) continue;
+                                        resposeHtml += $"{sp}{Environment.NewLine}";
+                                    }
+                                    resposeHtml += $"============================{Environment.NewLine}{Environment.NewLine}";
+                                }
+                            }
+                        }
+                        msg.Close();
+                        if (!string.IsNullOrEmpty(resposeHtml))
+                        {
+                            richTextBox1.Text = resposeHtml;
+                            newKeys = newKeys.Distinct().ToList();
+                            if (newKeys != null && newKeys.Any())
+                            {
+                                foreach (var newKey in newKeys)
+                                {
+                                    if (string.IsNullOrEmpty(newKey)) continue;
+                                    ChangeKeyColor(newKey, Color.Red);
+                                }
+                            }
+                            MessageBox.Show("查重完成！");
+                        }
+                        else
+                            MessageBox.Show("查重完成，不存在相似度大于等于90%的数据！");
                     }
                 }
             }

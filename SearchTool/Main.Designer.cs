@@ -35,10 +35,10 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -70,25 +70,21 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tabPage1.Location = new System.Drawing.Point(4, 33);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(1250, 1);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "题库答案";
-            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            this.tabPage2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tabPage2.Location = new System.Drawing.Point(4, 33);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(1250, 1);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "法律法规";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
@@ -109,6 +105,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1258, 52);
             this.panel1.TabIndex = 3;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(127, 5);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(112, 42);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "查重";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel2
             // 
@@ -138,16 +144,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1258, 617);
             this.panel3.TabIndex = 6;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(127, 5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(112, 42);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "查重";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Main
             // 

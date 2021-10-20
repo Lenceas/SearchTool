@@ -71,7 +71,7 @@ namespace SearchTool
                     }
                     dtNpoi.Rows.Add(dr);
                 }
-
+                dtNpoi.TableName = sheet.SheetName;
                 datatablelist.Add(dtNpoi);
             }
             return datatablelist;
