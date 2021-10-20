@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -66,9 +67,16 @@ namespace SearchTool
                         loadText += $"{Environment.NewLine}{index}.加载{dataTableList[i].TableName}...";
                         index++;
                         richTextBox1.Text = loadText;
-                        TabPage tp = new TabPage($"tablePage{i + 1}");
-                        tp.Text = $"{dataTableList[i].TableName}";
-                        tabControl1.TabPages.Add(tp);
+                        if (i == 0)
+                        {
+                            tabPage1.Text = dataTableList[i].TableName;
+                        }
+                        else
+                        {
+                            TabPage tp = new TabPage($"tablePage{i + 1}");
+                            tp.Text = dataTableList[i].TableName;
+                            tabControl1.TabPages.Add(tp);
+                        }
                     }
 
                     loadText += $"{Environment.NewLine}{index}.初始化完成。{Environment.NewLine}请输入您要查询的信息，可按空格分隔，将以两个词并联搜索";
@@ -95,9 +103,12 @@ namespace SearchTool
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            LoadSettings();
-            textBox1.Text = String.Empty;
-            richTextBox1.Text += $"{Environment.NewLine}重载配置完成。";
+            //LoadSettings();
+            //textBox1.Text = string.Empty;
+            //richTextBox1.Text += $"{Environment.NewLine}重载配置完成。";
+            Process process = Process.GetCurrentProcess();
+            process.Close();
+            Application.Restart();
         }
 
         /// <summary>
@@ -152,7 +163,7 @@ namespace SearchTool
                                 foreach (var item in newDatas)
                                 {
                                     splitStr = item.item.Split("|");
-                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{item.id}{item.type}{Environment.NewLine}";
+                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{item.id}】 - 【type:{item.type}】{Environment.NewLine}";
                                     foreach (var sp in splitStr)
                                     {
                                         if (string.IsNullOrEmpty(sp)) continue;
@@ -243,7 +254,7 @@ namespace SearchTool
                                     newKeys.Add($"相似度{likeness * 100}%");
                                     resposeHtml += $"=========相似度{likeness * 100}%=========";
                                     splitStr1 = excelModel1.item.Split("|");
-                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{excelModel1.id}{excelModel1.type}{Environment.NewLine}";
+                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{excelModel1.id}】 - 【type:{excelModel1.type}】{Environment.NewLine}";
                                     foreach (var sp in splitStr1)
                                     {
                                         if (string.IsNullOrEmpty(sp)) continue;
@@ -251,7 +262,7 @@ namespace SearchTool
                                     }
 
                                     splitStr2 = excelModel2.item.Split("|");
-                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{excelModel2.id}{excelModel2.type}{Environment.NewLine}";
+                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{excelModel2.id}】 - 【type:{excelModel2.type}】{Environment.NewLine}";
                                     foreach (var sp in splitStr2)
                                     {
                                         if (string.IsNullOrEmpty(sp)) continue;
