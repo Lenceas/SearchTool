@@ -17,6 +17,7 @@ namespace SearchTool
     public partial class Main : Form
     {
         private List<DataTable> dataTableList = new List<DataTable>();
+        private readonly string _fileName = "TestQuestion";
 
         public Main()
         {
@@ -45,19 +46,28 @@ namespace SearchTool
                 index++;
                 richTextBox1.Text = loadText;
                 var root = Application.StartupPath;
-                if (File.Exists($"{root}\\TestQuestion.xls") || File.Exists($"{root}\\TestQuestion.xlsx"))
+                var path = string.Empty;
+                if (File.Exists($"{root}..\\{_fileName}.xls"))
+                {
+                    path = $"{root}..\\{_fileName}.xls";
+                }
+                if (File.Exists($"{root}..\\{_fileName}.xlsx"))
+                {
+                    path = $"{root}..\\{_fileName}.xlsx";
+                }
+                if (!string.IsNullOrEmpty(path))
                 {
                     loadText += $"{Environment.NewLine}{index}.正在配置数据连接驱动通道...";
                     index++;
                     richTextBox1.Text = loadText;
-                    using (FileStream fileStream = new FileStream($"{root}\\TestQuestion.xls", FileMode.Open))
+                    using (FileStream fileStream = new FileStream(path, FileMode.Open))
                     {
                         dataTableList = new List<DataTable>();
                         dataTableList = ExcelOperationHelper.ExcelStreamToDataTable(fileStream);
                     }
                     if (dataTableList == null || !dataTableList.Any())
                     {
-                        loadText += $"{Environment.NewLine}Excel数据文件“TestQuestion”暂无数据!";
+                        loadText += $"{Environment.NewLine}Excel数据文件“{_fileName}”暂无数据!";
                         richTextBox1.Text = loadText;
                         return;
                     }
@@ -234,7 +244,7 @@ namespace SearchTool
                 var curTabDataTable = dataTableList[curSelectTabIndex];
                 if (curTabDataTable != null)
                 {
-                    var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable);
+                    var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable).Where(_ => _.type != null && _.item != null).ToList();
                     if (datas != null && datas.Any())
                     {
                         IAnalyser analyser = new SimHashAnalyser();
@@ -292,6 +302,11 @@ namespace SearchTool
                         }
                         else
                             MessageBox.Show("查重完成，不存在相似度大于等于90%的数据！");
+                    }
+                    else
+                    {
+                        msg.Close();
+                        MessageBox.Show($"{curTabDataTable.TableName}暂无数据或数据格式不正确！");
                     }
                 }
             }
