@@ -47,22 +47,22 @@
             // textBox1
             // 
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox1.Location = new System.Drawing.Point(0, 0);
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.textBox1.Location = new System.Drawing.Point(0, 64);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(1258, 92);
+            this.textBox1.Size = new System.Drawing.Size(1578, 101);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tabControl1.Location = new System.Drawing.Point(0, 98);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1258, 38);
+            this.tabControl1.Size = new System.Drawing.Size(1578, 40);
             this.tabControl1.TabIndex = 1;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -71,7 +71,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 33);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1250, 1);
+            this.tabPage1.Size = new System.Drawing.Size(1570, 3);
             this.tabPage1.TabIndex = 0;
             // 
             // button1
@@ -86,12 +86,13 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1258, 52);
+            this.panel1.Size = new System.Drawing.Size(1578, 165);
             this.panel1.TabIndex = 3;
             // 
             // button2
@@ -106,21 +107,21 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.textBox1);
             this.panel2.Controls.Add(this.tabControl1);
-            this.panel2.Location = new System.Drawing.Point(0, 53);
+            this.panel2.Location = new System.Drawing.Point(0, 160);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1258, 136);
+            this.panel2.Size = new System.Drawing.Size(1578, 40);
             this.panel2.TabIndex = 4;
             // 
             // richTextBox1
             // 
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Font = new System.Drawing.Font("Microsoft YaHei UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBox1.Size = new System.Drawing.Size(1258, 617);
+            this.richTextBox1.Size = new System.Drawing.Size(1578, 945);
             this.richTextBox1.TabIndex = 5;
             this.richTextBox1.Text = "";
             // 
@@ -128,29 +129,31 @@
             // 
             this.panel3.Controls.Add(this.richTextBox1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 187);
+            this.panel3.Location = new System.Drawing.Point(0, 199);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1258, 617);
+            this.panel3.Size = new System.Drawing.Size(1578, 945);
             this.panel3.TabIndex = 6;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1258, 804);
+            this.ClientSize = new System.Drawing.Size(1578, 1144);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "搜题工具v1.0 by Lenceas";
             this.Load += new System.EventHandler(this.Main_Load);
             this.tabControl1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
 

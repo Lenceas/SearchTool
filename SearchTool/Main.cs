@@ -175,7 +175,7 @@ namespace SearchTool
                                     foreach (var item in newDatas)
                                     {
                                         splitStr = item.item.Split("|");
-                                        resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{item.id}】 - 【type:{item.type}】{Environment.NewLine}";
+                                        resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{item.type}{Environment.NewLine}";
                                         foreach (var sp in splitStr)
                                         {
                                             if (string.IsNullOrEmpty(sp)) continue;
@@ -267,7 +267,7 @@ namespace SearchTool
                                     newKeys.Add($"相似度{likeness * 100}%");
                                     resposeHtml += $"=========相似度{likeness * 100}%=========";
                                     splitStr1 = excelModel1.item.Split("|");
-                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{excelModel1.id}】 - 【type:{excelModel1.type}】{Environment.NewLine}";
+                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{excelModel1.type}{Environment.NewLine}";
                                     foreach (var sp in splitStr1)
                                     {
                                         if (string.IsNullOrEmpty(sp)) continue;
@@ -275,7 +275,7 @@ namespace SearchTool
                                     }
 
                                     splitStr2 = excelModel2.item.Split("|");
-                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}【id:{excelModel2.id}】 - 【type:{excelModel2.type}】{Environment.NewLine}";
+                                    resposeHtml += $"{(string.IsNullOrEmpty(resposeHtml) ? "" : Environment.NewLine)}{excelModel2.type}{Environment.NewLine}";
                                     foreach (var sp in splitStr2)
                                     {
                                         if (string.IsNullOrEmpty(sp)) continue;
