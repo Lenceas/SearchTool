@@ -60,7 +60,7 @@ namespace SearchTool
                     loadText += $"{Environment.NewLine}{index}.正在配置数据连接驱动通道...";
                     index++;
                     richTextBox1.Text = loadText;
-                    using (FileStream fileStream = new FileStream(path, FileMode.Open))
+                    using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
                         dataTableList = new List<DataTable>();
                         dataTableList = ExcelOperationHelper.ExcelStreamToDataTable(fileStream);
@@ -147,7 +147,7 @@ namespace SearchTool
                 var curTabDataTable = dataTableList[curSelectTabIndex];
                 if (curTabDataTable != null)
                 {
-                    var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable).Where(_ => _.type != null && _.item != null);
+                    var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable).Where(_ => _.type != null && _.item != null).ToList();
                     if (datas != null && datas.Any())
                     {
                         var newKeys = new List<string>();
@@ -298,15 +298,15 @@ namespace SearchTool
                                     ChangeKeyColor(newKey, Color.Red);
                                 }
                             }
-                            MessageBox.Show("查重完成！");
+                            MessageBox.Show($"“{curTabDataTable.TableName}”查重完成！");
                         }
                         else
-                            MessageBox.Show("查重完成，不存在相似度大于等于90%的数据！");
+                            MessageBox.Show($"查重完成，“{curTabDataTable.TableName}”不存在相似度大于等于90%的数据！");
                     }
                     else
                     {
                         msg.Close();
-                        MessageBox.Show($"{curTabDataTable.TableName}暂无数据或数据格式不正确！");
+                        MessageBox.Show($"“{curTabDataTable.TableName}”暂无数据或数据格式不正确！");
                     }
                 }
             }

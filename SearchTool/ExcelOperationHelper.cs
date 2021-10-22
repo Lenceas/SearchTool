@@ -55,7 +55,7 @@ namespace SearchTool
                 }
 
                 // 数据 LastRowNum 最后一行的索引 如第九行---索引8
-                for (int i = startRow; i < sheet.LastRowNum; i++)
+                for (int i = startRow; i <= sheet.LastRowNum; i++)
                 {
                     IRow row = sheet.GetRow(i);// 获取第i行
                     if (row == null)
