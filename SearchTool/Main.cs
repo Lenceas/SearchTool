@@ -20,7 +20,7 @@ namespace SearchTool
         private List<DataTable> dataTableList = new List<DataTable>();
         private readonly string _fileName = "TestQuestion";
         private int pageIndex = 1;
-        private int pageSize = 100;
+        private int pageSize = 10;
         private int pages = 1;
         private int curRichTextDataNum = 1;
         private List<string> newKeys1 = new List<string>();// 搜索字符串关键字集合
@@ -243,15 +243,18 @@ namespace SearchTool
                             ChangeKeyColor1();
                             if (pages > 1)
                             {
-                                using (BackgroundWorker bw = new BackgroundWorker())
-                                {
-                                    //后台线程需要执行的委托
-                                    bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Thread1);
-                                    //后台线程结束后 会调用该委托
-                                    //bw.DoWork += new DoWorkEventHandler(Thread1);
-                                    //如果线程需要参数，可以传入参数  DoWorkEventArgs e.Argument调用参数
-                                    bw.RunWorkerAsync();
-                                }
+                                //using (BackgroundWorker bw = new BackgroundWorker())
+                                //{
+                                //    //后台线程需要执行的委托
+                                //    bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Thread1);
+                                //    //后台线程结束后 会调用该委托
+                                //    //bw.DoWork += new DoWorkEventHandler(Thread1);
+                                //    //如果线程需要参数，可以传入参数  DoWorkEventArgs e.Argument调用参数
+                                //    bw.RunWorkerAsync();
+                                //}
+                                Thread th = new Thread(new ThreadStart(Thread1));
+                                th.IsBackground = true;
+                                th.Start();
                             }
                         }
                     }
@@ -262,7 +265,7 @@ namespace SearchTool
         /// <summary>
         /// 搜索线程
         /// </summary>
-        private void Thread1(object sender, RunWorkerCompletedEventArgs e)
+        private void Thread1()
         {
             if (newKeys1 != null && newKeys1.Any())
             {
