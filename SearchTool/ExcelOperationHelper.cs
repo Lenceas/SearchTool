@@ -21,60 +21,81 @@ namespace SearchTool
         /// <returns></returns>
         public static List<DataTable> ToExcelDataTable(IWorkbook hSSFWorkbook)
         {
-            List<DataTable> datatablelist = new List<DataTable>();
-            for (int sheetIndex = 0; sheetIndex < hSSFWorkbook.NumberOfSheets; sheetIndex++)
+            try
             {
-                ISheet sheet = hSSFWorkbook.GetSheetAt(sheetIndex);
-                // 获取表头 FirstRowNum 第一行索引 0
-                IRow header = sheet.GetRow(sheet.FirstRowNum);// 获取第一行
-                if (header == null)
+                List<DataTable> datatablelist = new List<DataTable>();
+                for (int sheetIndex = 0; sheetIndex < hSSFWorkbook.NumberOfSheets; sheetIndex++)
                 {
-                    break;
-                }
-                int startRow = 0;// 数据的第一行索引
+                    ISheet sheet = hSSFWorkbook.GetSheetAt(sheetIndex);
+                    System.Collections.IEnumerator rows = sheet.GetRowEnumerator();
 
-                DataTable dtNpoi = new DataTable();
-                startRow = sheet.FirstRowNum + 1;
-                for (int i = header.FirstCellNum; i < header.LastCellNum; i++)
-                {
-                    ICell cell = header.GetCell(i);
-                    if (cell != null)
+                    //初始化列头
+                    DataTable dt = new DataTable();
+                    dt.TableName = sheet.SheetName;
+                    IRow row0 = sheet.GetRow(0);
+                    if (row0 != null)
                     {
-                        string cellValue = $"{cell}";
-                        if (cellValue != null)
+                        for (int i = 0; i < row0.LastCellNum; i++)
                         {
-                            DataColumn col = new DataColumn(cellValue);
-                            dtNpoi.Columns.Add(col);
-                        }
-                        else
-                        {
-                            DataColumn col = new DataColumn();
-                            dtNpoi.Columns.Add(col);
+                            ICell cell = row0.GetCell(i);
+                            if (cell == null)
+                            {
+                                dt.Columns.Add("cell" + i.ToString());
+                            }
+                            else
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        dt.Columns.Add($"{nameof(ExcelModel.id)}");
+                                        break;
+                                    case 1:
+                                        dt.Columns.Add($"{nameof(ExcelModel.type)}");
+                                        break;
+                                    case 2:
+                                        dt.Columns.Add($"{nameof(ExcelModel.item)}");
+                                        break;
+                                    default:
+                                        dt.Columns.Add(cell.ToString());
+                                        break;
+                                }
+                            }
                         }
                     }
-                }
 
-                // 数据 LastRowNum 最后一行的索引 如第九行---索引8
-                for (int i = startRow; i <= sheet.LastRowNum; i++)
-                {
-                    IRow row = sheet.GetRow(i);// 获取第i行
-                    if (row == null)
+                    int colCount = dt.Columns.Count;
+                    //获取行数据
+                    int rowCount = 0;
+                    while (rows.MoveNext())
                     {
-                        continue;
+                        if (rowCount > 0)
+                        {
+                            var row = (IRow)rows.Current;
+                            DataRow dr = dt.NewRow();
+                            for (int i = 0; i < colCount; i++)
+                            {
+                                ICell cell = row.GetCell(i);
+                                if (cell == null)
+                                {
+                                    dr[i] = null;
+                                }
+                                else
+                                {
+                                    dr[i] = cell.ToString();
+                                }
+                            }
+                            dt.Rows.Add(dr);
+                        }
+                        rowCount++;
                     }
-                    DataRow dr = dtNpoi.NewRow();
-                    // 遍历每行的单元格
-                    for (int j = row.FirstCellNum; j < row.LastCellNum; j++)
-                    {
-                        if (row.GetCell(j) != null)
-                            dr[j] = row.GetCell(j).ToString();
-                    }
-                    dtNpoi.Rows.Add(dr);
+                    datatablelist.Add(dt);
                 }
-                dtNpoi.TableName = sheet.SheetName;
-                datatablelist.Add(dtNpoi);
+                return datatablelist;
             }
-            return datatablelist;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
