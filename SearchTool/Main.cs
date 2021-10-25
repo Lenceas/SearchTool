@@ -20,7 +20,7 @@ namespace SearchTool
         private List<DataTable> dataTableList = new List<DataTable>();
         private readonly string _fileName = "TestQuestion";
         private int pageIndex = 1;
-        private int pageSize = 10;
+        private int pageSize = 20;
         private int pages = 1;
         private int curRichTextDataNum = 1;
         private List<string> newKeys1 = new List<string>();// 搜索字符串关键字集合
