@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "VZmN0Sf+bZhDcKwafIBh28A82DHGMtDd7xgghipiQBywXDpyNvQslxSKeoM1R1n40WKW47VegfOwZA4Rv9bUMA==",
+  "success": true,
+  "projectFilePath": "F:\\小工具\\搜题工具\\SearchTool\\SearchTool.Test\\SearchTool.Test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Lenceas\\.nuget\\packages\\newtonsoft.json\\11.0.1\\newtonsoft.json.11.0.1.nupkg.sha512",
+    "C:\\Users\\Lenceas\\.nuget\\packages\\system.text.encodings.web\\4.5.1\\system.text.encodings.web.4.5.1.nupkg.sha512",
+    "C:\\Users\\Lenceas\\.nuget\\packages\\tencentcloudsdk.common\\3.0.390\\tencentcloudsdk.common.3.0.390.nupkg.sha512",
+    "C:\\Users\\Lenceas\\.nuget\\packages\\tencentcloudsdk.ocr\\3.0.390\\tencentcloudsdk.ocr.3.0.390.nupkg.sha512"
+  ],
+  "logs": []
+}

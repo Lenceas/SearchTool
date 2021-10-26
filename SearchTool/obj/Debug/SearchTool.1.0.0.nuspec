@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>SearchTool</id>
+    <version>1.0.0</version>
+    <authors>SearchTool</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework="net5.0-windows7.0">
+        <dependency id="NPOI" version="2.5.4" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net5.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WindowsForms" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="F:\小工具\搜题工具\SearchTool\SearchTool\bin\Debug\net5.0-windows\SearchTool.runtimeconfig.json" target="lib\net5.0-windows7.0\SearchTool.runtimeconfig.json" />
+    <file src="F:\小工具\搜题工具\SearchTool\SearchTool\bin\Debug\net5.0-windows\SearchTool.dll" target="lib\net5.0-windows7.0\SearchTool.dll" />
+  </files>
+</package>

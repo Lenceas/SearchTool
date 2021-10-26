@@ -1,0 +1,197 @@
+{
+  "version": 3,
+  "targets": {
+    "net5.0": {
+      "Newtonsoft.Json/11.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        }
+      },
+      "System.Text.Encodings.Web/4.5.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Text.Encodings.Web.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Text.Encodings.Web.dll": {}
+        }
+      },
+      "TencentCloudSDK.Common/3.0.390": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.1",
+          "System.Text.Encodings.Web": "4.5.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/TencentCloudCommon.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/TencentCloudCommon.dll": {}
+        }
+      },
+      "TencentCloudSDK.Ocr/3.0.390": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.1",
+          "System.Text.Encodings.Web": "4.5.1",
+          "TencentCloudSDK.Common": "3.0.390"
+        },
+        "compile": {
+          "lib/netstandard2.0/TencentCloudOcr.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/TencentCloudOcr.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Newtonsoft.Json/11.0.1": {
+      "sha512": "pNN4l+J6LlpIvHOeNdXlwxv39NPJ2B5klz+Rd2UQZIx30Squ5oND1Yy3wEAUoKn0GPUj6Yxt9lxlYWQqfZcvKg==",
+      "type": "package",
+      "path": "newtonsoft.json/11.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.11.0.1.nupkg.sha512",
+        "newtonsoft.json.nuspec"
+      ]
+    },
+    "System.Text.Encodings.Web/4.5.1": {
+      "sha512": "8lfETN/1lu0QD+XQaDCxn6InX3KYJHCFO6Iqrm92zn9eOEeonTuyisKxW0nLZfse598LibhEItiRdPzVn8Beyg==",
+      "type": "package",
+      "path": "system.text.encodings.web/4.5.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netstandard1.0/System.Text.Encodings.Web.dll",
+        "lib/netstandard1.0/System.Text.Encodings.Web.xml",
+        "lib/netstandard2.0/System.Text.Encodings.Web.dll",
+        "lib/netstandard2.0/System.Text.Encodings.Web.xml",
+        "system.text.encodings.web.4.5.1.nupkg.sha512",
+        "system.text.encodings.web.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "TencentCloudSDK.Common/3.0.390": {
+      "sha512": "Hbczx9o310lJU9nbuNTb3sEVkR9XxW5eT4wshk0HguPapclKwEvsdxmr/apGeP+La8lA041YR+sqnU7Hx3A63g==",
+      "type": "package",
+      "path": "tencentcloudsdk.common/3.0.390",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/TencentCloudCommon.dll",
+        "lib/netstandard2.0/TencentCloudCommon.dll",
+        "tencentcloudsdk.common.3.0.390.nupkg.sha512",
+        "tencentcloudsdk.common.nuspec"
+      ]
+    },
+    "TencentCloudSDK.Ocr/3.0.390": {
+      "sha512": "S7zmxdiiQj4MkJH7TeeMiIIGk/Z8yFBeHWC6UWjoBKCQOK+M+nhq9cg6/aMhY/ULNdc5lr82lK+coept0/ak7w==",
+      "type": "package",
+      "path": "tencentcloudsdk.ocr/3.0.390",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/TencentCloudOcr.dll",
+        "lib/netstandard2.0/TencentCloudOcr.dll",
+        "tencentcloudsdk.ocr.3.0.390.nupkg.sha512",
+        "tencentcloudsdk.ocr.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net5.0": [
+      "TencentCloudSDK.Ocr >= 3.0.390"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Lenceas\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "F:\\小工具\\搜题工具\\SearchTool\\SearchTool.Test\\SearchTool.Test.csproj",
+      "projectName": "SearchTool.Test",
+      "projectPath": "F:\\小工具\\搜题工具\\SearchTool\\SearchTool.Test\\SearchTool.Test.csproj",
+      "packagesPath": "C:\\Users\\Lenceas\\.nuget\\packages\\",
+      "outputPath": "F:\\小工具\\搜题工具\\SearchTool\\SearchTool.Test\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\Lenceas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net5.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net5.0": {
+        "targetAlias": "net5.0",
+        "dependencies": {
+          "TencentCloudSDK.Ocr": {
+            "target": "Package",
+            "version": "[3.0.390, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100-rc.2.21505.57\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

@@ -12,7 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.5.4" />
+    <PackageReference Include="NPOI" Version="2.5.5" />
+    <PackageReference Include="TencentCloudSDK.Ocr" Version="3.0.390" />
   </ItemGroup>
 
 </Project>

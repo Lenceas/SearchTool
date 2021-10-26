@@ -1,0 +1,88 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "SearchTool.Test/1.0.0": {
+        "dependencies": {
+          "TencentCloudSDK.Ocr": "3.0.390"
+        },
+        "runtime": {
+          "SearchTool.Test.dll": {}
+        }
+      },
+      "Newtonsoft.Json/11.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.0.1.21818"
+          }
+        }
+      },
+      "System.Text.Encodings.Web/4.5.1": {},
+      "TencentCloudSDK.Common/3.0.390": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.1",
+          "System.Text.Encodings.Web": "4.5.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/TencentCloudCommon.dll": {
+            "assemblyVersion": "3.0.390.0",
+            "fileVersion": "3.0.390.0"
+          }
+        }
+      },
+      "TencentCloudSDK.Ocr/3.0.390": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.1",
+          "System.Text.Encodings.Web": "4.5.1",
+          "TencentCloudSDK.Common": "3.0.390"
+        },
+        "runtime": {
+          "lib/netstandard2.0/TencentCloudOcr.dll": {
+            "assemblyVersion": "3.0.390.0",
+            "fileVersion": "3.0.390.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SearchTool.Test/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json/11.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pNN4l+J6LlpIvHOeNdXlwxv39NPJ2B5klz+Rd2UQZIx30Squ5oND1Yy3wEAUoKn0GPUj6Yxt9lxlYWQqfZcvKg==",
+      "path": "newtonsoft.json/11.0.1",
+      "hashPath": "newtonsoft.json.11.0.1.nupkg.sha512"
+    },
+    "System.Text.Encodings.Web/4.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8lfETN/1lu0QD+XQaDCxn6InX3KYJHCFO6Iqrm92zn9eOEeonTuyisKxW0nLZfse598LibhEItiRdPzVn8Beyg==",
+      "path": "system.text.encodings.web/4.5.1",
+      "hashPath": "system.text.encodings.web.4.5.1.nupkg.sha512"
+    },
+    "TencentCloudSDK.Common/3.0.390": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Hbczx9o310lJU9nbuNTb3sEVkR9XxW5eT4wshk0HguPapclKwEvsdxmr/apGeP+La8lA041YR+sqnU7Hx3A63g==",
+      "path": "tencentcloudsdk.common/3.0.390",
+      "hashPath": "tencentcloudsdk.common.3.0.390.nupkg.sha512"
+    },
+    "TencentCloudSDK.Ocr/3.0.390": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-S7zmxdiiQj4MkJH7TeeMiIIGk/Z8yFBeHWC6UWjoBKCQOK+M+nhq9cg6/aMhY/ULNdc5lr82lK+coept0/ak7w==",
+      "path": "tencentcloudsdk.ocr/3.0.390",
+      "hashPath": "tencentcloudsdk.ocr.3.0.390.nupkg.sha512"
+    }
+  }
+}

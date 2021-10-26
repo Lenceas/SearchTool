@@ -148,6 +148,15 @@ namespace SearchTool
                             tabControl1.TabPages.Add(tp);
                         }
                     }
+                    richTextBox1.AppendText($"{Environment.NewLine}{index}.加载图片识别文字功能...");
+                    index++;
+                    var secret = EstateCertOCR.InitSecret();
+                    if (secret == null || string.IsNullOrEmpty(secret.secretId) || string.IsNullOrEmpty(secret.secretKey))
+                    {
+                        richTextBox1.AppendText("图别识别密钥加载失败,功能暂不可用,请检查secret_Id_Key.txt文件是否存在!");
+                    }
+                    else
+                        richTextBox1.AppendText("加载成功!");
                     richTextBox1.AppendText($"{Environment.NewLine}{index}.初始化完成。{Environment.NewLine}请输入您要查询的信息，可按空格分隔，将以两个词并联搜索");
                 }
                 else
@@ -710,6 +719,68 @@ namespace SearchTool
                     textBox2.Text = "1";
                     return;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 鼠标拖动某项到搜索文本框工作区时发生事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+
+        /// <summary>
+        /// 拖动到搜索文本框工作区操作完成时发生事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // 从拖动数据里得到路径
+                string realpath = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                if (string.IsNullOrEmpty(realpath))
+                {
+                    MessageBox.Show("图片路径为空,请重新拖动图片");
+                    return;
+                }
+                // 文件后缀名
+                string p = Path.GetExtension(realpath);
+                if (string.IsNullOrEmpty(p))
+                {
+                    MessageBox.Show("暂时只支持识别jgp/jpeg/png/bmp格式的图片");
+                    return;
+                }
+                if (p == ".jpg" || p == ".jpeg" || p == ".png" || p == ".bmp")
+                {
+                    var ocrModel = EstateCertOCR.Ocr1(realpath);
+                    var ocrStr = string.Empty;
+                    if (ocrModel.TextDetections.Count() > 0)
+                    {
+                        var keysList = ocrModel.TextDetections.Select(_ => _.DetectedText).Distinct() ?? new List<string>();
+                        ocrStr = string.Join(" ", keysList);
+                    }
+                    if (!string.IsNullOrEmpty(ocrStr))
+                    {
+                        textBox1.Text = ocrStr;
+                    }
+                    else
+                    {
+                        MessageBox.Show("图片中未检测到文本");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("暂时只支持识别jgp/jpeg/png/bmp格式的图片");
+                }
+            }
+            else
+            {
+                MessageBox.Show("请拖动要识别文字的图片到搜索框");
             }
         }
     }
