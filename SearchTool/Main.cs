@@ -283,6 +283,7 @@ namespace SearchTool
                             // 更新总页数
                             pages = newDatas.Count() % pageSize == 0 ? newDatas.Count() / pageSize : newDatas.Count() / pageSize + 1;
                             InitPages(pages);
+                            curRichTextDataNum = newDatas.Count();
                             InitPageTotalNum(newDatas.Count());
                             newDatas = newDatas.Skip((pageIndex - 1) * pageSize).Take(pageSize);
                             var resposeHtml = string.Empty;
@@ -403,7 +404,7 @@ namespace SearchTool
         {
             if (newKeys2 != null && newKeys2.Any())
             {
-                foreach (var newKey in newKeys2)
+                foreach (var newKey in newKeys2.ToList())
                 {
                     if (string.IsNullOrEmpty(newKey)) continue;
                     if (isMainUIThread)
@@ -507,7 +508,6 @@ namespace SearchTool
                         var excelModel2 = new ExcelModel();
                         var splitStr1 = new string[0];
                         var splitStr2 = new string[0];
-                        var newKeys = new List<string>();
                         var resposeHtml = string.Empty;
                         var sigleResposeHtml = string.Empty;
                         var lastAddIndex = 1;
@@ -537,8 +537,8 @@ namespace SearchTool
                                         if (likeness >= 0.9)
                                         {
                                             curRichTextDataNum++;
-                                            newKeys.Add($"相似度{likeness * 100}%");
                                             newKeys2.Add($"相似度{likeness * 100}%");
+                                            newKeys2 = newKeys2.Distinct().ToList();
                                             resposeHtml += $"=========相似度{likeness * 100}%=========";
                                             sigleResposeHtml += $"=========相似度{likeness * 100}%=========";
                                             splitStr1 = excelModel1.item.Split("|");
@@ -562,10 +562,8 @@ namespace SearchTool
                                             resposeHtml += $"============================{Environment.NewLine}{Environment.NewLine}";
                                             sigleResposeHtml += $"============================{Environment.NewLine}{Environment.NewLine}";
                                             if (curRichTextDataNum <= pageSize)
-                                            {
                                                 m_SyncContext.Post(SetRichTextAppendText, sigleResposeHtml);
-                                                m_SyncContext.Post(InitPageTotalNum, curRichTextDataNum);
-                                            }
+                                            m_SyncContext.Post(InitPageTotalNum, curRichTextDataNum);
                                             if (curRichTextDataNum % pageSize == 0)
                                             {
                                                 richTextBoxList2.Add(resposeHtml);
@@ -589,9 +587,6 @@ namespace SearchTool
                         }
                         if (!string.IsNullOrEmpty(resposeHtml) && curRichTextDataNum > lastAddIndex && lastAddIndex != 1)
                             richTextBoxList2.Add(resposeHtml);
-                        newKeys = newKeys.Distinct().ToList();
-                        newKeys2 = new List<string>();
-                        newKeys2 = newKeys;
                         pages = richTextBoxList2.Count();
                         //this.textBox3.Text = pages.ToString();
                         //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
