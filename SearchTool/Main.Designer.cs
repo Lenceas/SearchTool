@@ -34,6 +34,12 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.th2_run = new System.Windows.Forms.Label();
+            this.th1_run = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.richNum = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -56,10 +62,10 @@
             this.textBox1.AllowDrop = true;
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.textBox1.Location = new System.Drawing.Point(0, 64);
+            this.textBox1.Location = new System.Drawing.Point(0, 76);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(1578, 101);
+            this.textBox1.Size = new System.Drawing.Size(1578, 89);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox1_DragDrop);
@@ -96,6 +102,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.th2_run);
+            this.panel1.Controls.Add(this.th1_run);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.richNum);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Controls.Add(this.textBox3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.textBox2);
@@ -111,6 +123,64 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1578, 165);
             this.panel1.TabIndex = 3;
+            // 
+            // th2_run
+            // 
+            this.th2_run.AutoSize = true;
+            this.th2_run.Location = new System.Drawing.Point(1362, 14);
+            this.th2_run.Name = "th2_run";
+            this.th2_run.Size = new System.Drawing.Size(21, 24);
+            this.th2_run.TabIndex = 16;
+            this.th2_run.Text = "1";
+            this.th2_run.Visible = false;
+            // 
+            // th1_run
+            // 
+            this.th1_run.AutoSize = true;
+            this.th1_run.Location = new System.Drawing.Point(1335, 14);
+            this.th1_run.Name = "th1_run";
+            this.th1_run.Size = new System.Drawing.Size(21, 24);
+            this.th1_run.TabIndex = 15;
+            this.th1_run.Text = "1";
+            this.th1_run.Visible = false;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(982, 13);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(122, 24);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "分页大小：20";
+            // 
+            // richNum
+            // 
+            this.richNum.AutoSize = true;
+            this.richNum.Location = new System.Drawing.Point(1110, 14);
+            this.richNum.Name = "richNum";
+            this.richNum.Size = new System.Drawing.Size(219, 24);
+            this.richNum.TabIndex = 7;
+            this.richNum.Text = "搜索或查重结果总条数：0";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Location = new System.Drawing.Point(700, 50);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(0, 24);
+            this.label3.TabIndex = 13;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar1.ForeColor = System.Drawing.Color.Black;
+            this.progressBar1.Location = new System.Drawing.Point(0, 47);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(1578, 29);
+            this.progressBar1.Step = 1;
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 12;
             // 
             // textBox3
             // 
@@ -264,5 +334,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label richNum;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label th1_run;
+        private System.Windows.Forms.Label th2_run;
     }
 }

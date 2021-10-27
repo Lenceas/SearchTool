@@ -41,7 +41,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "正在查重中请稍后...";
-            this.TopMost = true;
             this.ResumeLayout(false);
 
         }

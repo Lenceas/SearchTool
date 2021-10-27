@@ -17,17 +17,26 @@ namespace SearchTool
 {
     public partial class Main : Form
     {
+        SynchronizationContext m_SyncContext = null;
         private List<DataTable> dataTableList = new List<DataTable>();
         private readonly string _fileName = "TestQuestion";
         private int pageIndex = 1;
         private int pageSize = 20;
         private int pages = 1;
-        private int curRichTextDataNum = 1;
+        private int curRichTextDataNum = 0;
         private List<string> newKeys1 = new List<string>();// 搜索字符串关键字集合
         private List<string> richTextBoxList1 = new List<string>();// 搜索字符串分页数据集合
         private List<string> newKeys2 = new List<string>();// 查重字符串关键字集合
         private List<string> richTextBoxList2 = new List<string>();// 查重字符串分页数据集合
         private int curSelectTabIndex = 0;// 当前选中tab索引
+        private bool isSearch = true;// 给分页功能相关按钮用 默认是 搜索
+        private double ProgressLabTxtLoadingIndex = 0;// 后台查重进度百分比
+        private int proIndex = 0;// 查重循环匹配次数
+        private int TotalNum = 0;// 查重循环总匹配次数
+        private Thread th1;// 搜索线程
+        private Thread th2;// 查重线程
+        private int cci = 0;// 查重子线程for循环i起始值
+        private int ccj = 0;// 重置查重子线程for循环j起始值
 
         /// <summary>
         /// 主函数
@@ -35,6 +44,8 @@ namespace SearchTool
         public Main()
         {
             InitializeComponent();
+            //获取UI线程同步上下文
+            m_SyncContext = SynchronizationContext.Current;
         }
 
         /// <summary>
@@ -45,6 +56,8 @@ namespace SearchTool
         private void Main_Load(object sender, EventArgs e)
         {
             textBox2.LostFocus += TextBox2_LostFocus;
+            label3.Parent = progressBar1;
+            label3.Location = new Point(650, 3);
             LoadSettings();
         }
 
@@ -67,6 +80,15 @@ namespace SearchTool
         /// </summary>
         private void RestartSettings()
         {
+            // 销毁线程
+            if (th1 != null && th1.IsAlive)
+            {
+                th1_run.Text = "0";
+            }
+            if (th2 != null && th2.IsAlive)
+            {
+                th2_run.Text = "0";
+            }
             // 重置富文本内容
             richTextBox1.Text = String.Empty;
             // 重置当前页
@@ -78,7 +100,7 @@ namespace SearchTool
             // 重置总页数文本框
             textBox3.Text = "1";
             // 重置富文本内容条数
-            curRichTextDataNum = 1;
+            curRichTextDataNum = 0;
             // 重置搜索字符串关键字集合
             newKeys1 = new List<string>();
             // 重置搜索字符串分页数据集合
@@ -87,15 +109,42 @@ namespace SearchTool
             newKeys2 = new List<string>();
             // 重置查重字符串分页数据集合
             richTextBoxList2 = new List<string>();
+            // 重置查重进度条
+            progressBar1.Value = 0;
+            // 重置查重匹配次数
+            proIndex = 0;
+            // 查重循环总匹配次数
+            TotalNum = 0;
+            // 重置查重进度百分比数值
+            ProgressLabTxtLoadingIndex = 0;
+            // 重置后台查重进度文本
+            label3.Text = "";
+            // 重置查重子线程for循环i起始值
+            cci = 0;
+            // 重置查重子线程for循环j起始值
+            ccj = 0;
+            // 重置搜索或查重结果总条数
+            richNum.Text = "搜索或查重结果总条数：0";
         }
 
         /// <summary>
         /// 总页数赋值
         /// </summary>
         /// <param name="pages"></param>
-        private void InitPages(int pages)
+        private void InitPages(object pages)
         {
             textBox3.Text = pages.ToString();
+            textBox3.Refresh();
+        }
+
+        /// <summary>
+        /// 搜索或查重结果总条数赋值
+        /// </summary>
+        /// <param name="pages"></param>
+        private void InitPageTotalNum(object num)
+        {
+            richNum.Text = $"搜索或查重结果总条数：{curRichTextDataNum}";
+            richNum.Refresh();
         }
 
         /// <summary>
@@ -191,6 +240,7 @@ namespace SearchTool
         /// <param name="e"></param>
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            isSearch = true;
             RestartSettings();
             Search();
         }
@@ -233,12 +283,14 @@ namespace SearchTool
                             // 更新总页数
                             pages = newDatas.Count() % pageSize == 0 ? newDatas.Count() / pageSize : newDatas.Count() / pageSize + 1;
                             InitPages(pages);
-
+                            InitPageTotalNum(newDatas.Count());
                             newDatas = newDatas.Skip((pageIndex - 1) * pageSize).Take(pageSize);
                             var resposeHtml = string.Empty;
                             var splitStr = new string[0];
                             foreach (var item in newDatas)
                             {
+                                curRichTextDataNum++;
+                                Application.DoEvents();
                                 splitStr = item.item.Split("|");
                                 richTextBox1.AppendText($"{(string.IsNullOrEmpty(richTextBox1.Text) ? "" : Environment.NewLine)}{item.type}{Environment.NewLine}");
                                 foreach (var sp in splitStr)
@@ -246,24 +298,15 @@ namespace SearchTool
                                     if (string.IsNullOrEmpty(sp)) continue;
                                     richTextBox1.AppendText($"{sp}{Environment.NewLine}");
                                 }
-                                curRichTextDataNum++;
                             }
                             richTextBoxList1.Add(richTextBox1.Text);
                             ChangeKeyColor1();
                             if (pages > 1)
                             {
-                                //using (BackgroundWorker bw = new BackgroundWorker())
-                                //{
-                                //    //后台线程需要执行的委托
-                                //    bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Thread1);
-                                //    //后台线程结束后 会调用该委托
-                                //    //bw.DoWork += new DoWorkEventHandler(Thread1);
-                                //    //如果线程需要参数，可以传入参数  DoWorkEventArgs e.Argument调用参数
-                                //    bw.RunWorkerAsync();
-                                //}
-                                Thread th = new Thread(new ThreadStart(Thread1));
-                                th.IsBackground = true;
-                                th.Start();
+                                this.th1_run.Text = "1";
+                                th1 = new Thread(new ThreadStart(Thread1));
+                                th1.IsBackground = true;
+                                th1.Start();
                             }
                         }
                     }
@@ -280,6 +323,10 @@ namespace SearchTool
             {
                 if (dataTableList != null && dataTableList.Any())
                 {
+                    this.Invoke(new Action(() =>
+                    {
+                        curSelectTabIndex = tabControl1.SelectedIndex;
+                    }));
                     var curTabDataTable = dataTableList[curSelectTabIndex];
                     if (curTabDataTable != null)
                     {
@@ -297,11 +344,17 @@ namespace SearchTool
                             if (newDatas != null && newDatas.Any())
                             {
                                 newDatas = newDatas.Skip(pageSize);
-                                curRichTextDataNum = pageSize + 1;
                                 var resposeHtml = string.Empty;
                                 var splitStr = new string[0];
                                 foreach (var item in newDatas)
                                 {
+                                    curRichTextDataNum++;
+                                    Application.DoEvents();
+                                    this.Invoke(new Action(() =>
+                                    {
+                                        if (this.th1_run.Text.Equals("0"))
+                                            return;
+                                    }));
                                     splitStr = item.item.Split("|");
                                     resposeHtml += $"{(curRichTextDataNum % pageSize == 1 ? "" : Environment.NewLine)}{item.type}{Environment.NewLine}";
                                     foreach (var sp in splitStr)
@@ -314,26 +367,30 @@ namespace SearchTool
                                         richTextBoxList1.Add(resposeHtml);
                                         resposeHtml = String.Empty;
                                     }
-                                    curRichTextDataNum++;
                                 }
                             }
                         }
                     }
                 }
             }
+            this.th1_run.Text = "1";
         }
 
         /// <summary>
         /// 搜索关键字重新改变颜色
         /// </summary>
-        private void ChangeKeyColor1()
+        /// <param name="isMainUIThread">是否UI主线程调用,默认是</param>
+        private void ChangeKeyColor1(bool isMainUIThread = true)
         {
             if (newKeys1 != null && newKeys1.Any())
             {
                 foreach (var newKey in newKeys1)
                 {
                     if (string.IsNullOrEmpty(newKey)) continue;
-                    ChangeKeyColor(newKey, Color.Red);
+                    if (isMainUIThread)
+                        ChangeKeyColor(newKey, Color.Red);
+                    else
+                        ChangeKeyColorThread(newKey, Color.Red);
                 }
             }
         }
@@ -341,14 +398,18 @@ namespace SearchTool
         /// <summary>
         /// 查重关键字重新改变颜色
         /// </summary>
-        private void ChangeKeyColor2()
+        /// <param name="isMainUIThread">是否UI主线程调用,默认是</param>
+        private void ChangeKeyColor2(bool isMainUIThread = true)
         {
             if (newKeys2 != null && newKeys2.Any())
             {
                 foreach (var newKey in newKeys2)
                 {
                     if (string.IsNullOrEmpty(newKey)) continue;
-                    ChangeKeyColor(newKey, Color.Red);
+                    if (isMainUIThread)
+                        ChangeKeyColor(newKey, Color.Red);
+                    else
+                        ChangeKeyColorThread(newKey, Color.Red);
                 }
             }
         }
@@ -374,12 +435,36 @@ namespace SearchTool
         }
 
         /// <summary>
+        /// 切换字体颜色 子线程专用
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="color"></param>
+        private void ChangeKeyColorThread(string key, Color color)
+        {
+            this.Invoke(new Action(() =>
+            {
+                Regex regex = new Regex(key);
+                //找出内容中所有的要替换的关键字
+                MatchCollection collection = regex.Matches(richTextBox1.Text);
+                //对所有的要替换颜色的关键字逐个替换颜色
+                foreach (Match match in collection)
+                {
+                    //开始位置、长度、颜色缺一不可
+                    richTextBox1.SelectionStart = match.Index;
+                    richTextBox1.SelectionLength = key.Length;
+                    richTextBox1.SelectionColor = color;
+                }
+            }));
+        }
+
+        /// <summary>
         /// 当前选项卡选中改变事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            isSearch = true;
             RestartSettings();
             Search();
         }
@@ -391,99 +476,25 @@ namespace SearchTool
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
+            isSearch = false;
             RestartSettings();
-            Message msg = new Message();
-            msg.Show();
-            // 当前选中tab索引
-            curSelectTabIndex = tabControl1.SelectedIndex;
-            if (dataTableList != null && dataTableList.Any())
-            {
-                var curTabDataTable = dataTableList[curSelectTabIndex];
-                if (curTabDataTable != null)
-                {
-                    var datas = ModelConvertHelper<ExcelModel>.ConvertToModel(curTabDataTable).Where(_ => _.type != null && _.item != null).ToList();
-                    if (datas != null && datas.Any())
-                    {
-                        IAnalyser analyser = new SimHashAnalyser();
-                        var likeness = 0.0;
-                        var excelModel1 = new ExcelModel();
-                        var excelModel2 = new ExcelModel();
-                        var splitStr1 = new string[0];
-                        var splitStr2 = new string[0];
-                        var newKeys = new List<string>();
-                        for (int i = 0; i < datas.Count; i++)
-                        {
-                            for (int j = i + 1; j < datas.Count; j++)
-                            {
-                                excelModel1 = datas[i];
-                                excelModel2 = datas[j];
-                                likeness = analyser.GetLikenessValue(excelModel1.item, excelModel2.item);
-                                if (likeness >= 0.9)
-                                {
-                                    newKeys.Add($"相似度{likeness * 100}%");
-                                    richTextBox1.AppendText($"=========相似度{likeness * 100}%=========");
-                                    splitStr1 = excelModel1.item.Split("|");
-                                    richTextBox1.AppendText($"{(string.IsNullOrEmpty(richTextBox1.Text) ? "" : Environment.NewLine)}{excelModel1.type}{Environment.NewLine}");
-                                    foreach (var sp in splitStr1)
-                                    {
-                                        if (string.IsNullOrEmpty(sp)) continue;
-                                        richTextBox1.AppendText($"{sp}{Environment.NewLine}");
-                                    }
-                                    splitStr2 = excelModel2.item.Split("|");
-                                    richTextBox1.AppendText($"{(string.IsNullOrEmpty(richTextBox1.Text) ? "" : Environment.NewLine)}{excelModel2.type}{Environment.NewLine}");
-                                    foreach (var sp in splitStr2)
-                                    {
-                                        if (string.IsNullOrEmpty(sp)) continue;
-                                        richTextBox1.AppendText($"{sp}{Environment.NewLine}");
-                                    }
-                                    richTextBox1.AppendText($"============================{Environment.NewLine}{Environment.NewLine}");
-                                    if (curRichTextDataNum == pageSize)
-                                    {
-                                        curRichTextDataNum++;
-                                        break;
-                                    }
-                                    curRichTextDataNum++;
-                                }
-                                if (curRichTextDataNum == pageSize + 1) break;
-                            }
-                        }
-                        msg.Close();
-                        if (!string.IsNullOrEmpty(richTextBox1.Text))
-                        {
-                            newKeys = newKeys.Distinct().ToList();
-                            newKeys2 = newKeys;
-                            richTextBoxList2.Add(richTextBox1.Text);
-                            ChangeKeyColor2();
-                            using (BackgroundWorker bw = new BackgroundWorker())
-                            {
-                                //后台线程需要执行的委托
-                                bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Thread2);
-                                //后台线程结束后 会调用该委托
-                                //bw.DoWork += new DoWorkEventHandler(Thread2);
-                                //如果线程需要参数，可以传入参数  DoWorkEventArgs e.Argument调用参数
-                                bw.RunWorkerAsync();
-                            }
-                            MessageBox.Show($"“{curTabDataTable.TableName}”查重完成！");
-                        }
-                        else
-                            MessageBox.Show($"查重完成，“{curTabDataTable.TableName}”不存在相似度大于等于90%的数据！");
-                    }
-                    else
-                    {
-                        msg.Close();
-                        MessageBox.Show($"“{curTabDataTable.TableName}”暂无数据或数据格式不正确！");
-                    }
-                }
-            }
+            this.th2_run.Text = "1";
+            th2 = new Thread(new ThreadStart(Thread2));
+            th2.IsBackground = true;
+            th2.Start();
         }
 
         /// <summary>
-        /// 查重线程
+        /// 查重子线程
         /// </summary>
-        private void Thread2(object sender, RunWorkerCompletedEventArgs e)
+        private void Thread2()
         {
             if (dataTableList != null && dataTableList.Any())
             {
+                this.Invoke((Action)(() =>
+                {
+                    curSelectTabIndex = tabControl1.SelectedIndex;
+                }));
                 var curTabDataTable = dataTableList[curSelectTabIndex];
                 if (curTabDataTable != null)
                 {
@@ -498,56 +509,100 @@ namespace SearchTool
                         var splitStr2 = new string[0];
                         var newKeys = new List<string>();
                         var resposeHtml = string.Empty;
-                        curRichTextDataNum = 1;
+                        var sigleResposeHtml = string.Empty;
                         var lastAddIndex = 1;
+                        TotalNum = GetTotalNum(datas.Count());
+                        this.Invoke(new Action(() =>
+                        {
+                            progressBar1.Maximum = TotalNum;
+                        }));
                         for (int i = 0; i < datas.Count; i++)
                         {
                             for (int j = i + 1; j < datas.Count; j++)
                             {
-                                excelModel1 = datas[i];
-                                excelModel2 = datas[j];
-                                likeness = analyser.GetLikenessValue(excelModel1.item, excelModel2.item);
-                                if (likeness >= 0.9)
+                                this.Invoke(new Action(() =>
                                 {
-                                    newKeys.Add($"相似度{likeness * 100}%");
-                                    resposeHtml += $"=========相似度{likeness * 100}%=========";
-                                    splitStr1 = excelModel1.item.Split("|");
-                                    resposeHtml += $"{Environment.NewLine}{excelModel1.type}{Environment.NewLine}";
-                                    foreach (var sp in splitStr1)
+                                    Application.DoEvents();
+                                    if (this.th2_run.Text.Equals("0"))
                                     {
-                                        if (string.IsNullOrEmpty(sp)) continue;
-                                        resposeHtml += $"{sp}{Environment.NewLine}";
+                                        datas = new List<ExcelModel>();
+                                        return;
                                     }
-                                    splitStr2 = excelModel2.item.Split("|");
-                                    resposeHtml += $"{Environment.NewLine}{excelModel2.type}{Environment.NewLine}";
-                                    foreach (var sp in splitStr2)
+                                    else
                                     {
-                                        if (string.IsNullOrEmpty(sp)) continue;
-                                        resposeHtml += $"{sp}{Environment.NewLine}";
-                                    }
-                                    resposeHtml += $"============================{Environment.NewLine}{Environment.NewLine}";
-                                    if (curRichTextDataNum % pageSize == 0)
-                                    {
-                                        if (!string.IsNullOrEmpty(resposeHtml) && curRichTextDataNum != pageSize)
+                                        proIndex++;
+                                        excelModel1 = datas[i];
+                                        excelModel2 = datas[j];
+                                        likeness = analyser.GetLikenessValue(excelModel1.item, excelModel2.item);
+                                        if (likeness >= 0.9)
                                         {
-                                            richTextBoxList2.Add(resposeHtml);
-                                            lastAddIndex = curRichTextDataNum;
+                                            curRichTextDataNum++;
+                                            newKeys.Add($"相似度{likeness * 100}%");
+                                            newKeys2.Add($"相似度{likeness * 100}%");
+                                            resposeHtml += $"=========相似度{likeness * 100}%=========";
+                                            sigleResposeHtml += $"=========相似度{likeness * 100}%=========";
+                                            splitStr1 = excelModel1.item.Split("|");
+                                            resposeHtml += $"{Environment.NewLine}{excelModel1.type}{Environment.NewLine}";
+                                            sigleResposeHtml += $"{Environment.NewLine}{excelModel1.type}{Environment.NewLine}";
+                                            foreach (var sp in splitStr1)
+                                            {
+                                                if (string.IsNullOrEmpty(sp)) continue;
+                                                resposeHtml += $"{sp}{Environment.NewLine}";
+                                                sigleResposeHtml += $"{sp}{Environment.NewLine}";
+                                            }
+                                            splitStr2 = excelModel2.item.Split("|");
+                                            resposeHtml += $"{Environment.NewLine}{excelModel2.type}{Environment.NewLine}";
+                                            sigleResposeHtml += $"{Environment.NewLine}{excelModel2.type}{Environment.NewLine}";
+                                            foreach (var sp in splitStr2)
+                                            {
+                                                if (string.IsNullOrEmpty(sp)) continue;
+                                                resposeHtml += $"{sp}{Environment.NewLine}";
+                                                sigleResposeHtml += $"{sp}{Environment.NewLine}";
+                                            }
+                                            resposeHtml += $"============================{Environment.NewLine}{Environment.NewLine}";
+                                            sigleResposeHtml += $"============================{Environment.NewLine}{Environment.NewLine}";
+                                            if (curRichTextDataNum <= pageSize)
+                                            {
+                                                m_SyncContext.Post(SetRichTextAppendText, sigleResposeHtml);
+                                                m_SyncContext.Post(InitPageTotalNum, curRichTextDataNum);
+                                            }
+                                            if (curRichTextDataNum % pageSize == 0)
+                                            {
+                                                richTextBoxList2.Add(resposeHtml);
+                                                pages = richTextBoxList2.Count();
+                                                m_SyncContext.Post(SetTextSafePost, pages);
+                                                lastAddIndex = curRichTextDataNum;
+                                                resposeHtml = String.Empty;
+                                            }
+                                            sigleResposeHtml = String.Empty;
                                         }
-                                        resposeHtml = String.Empty;
+                                        var proText = Math.Round((double)proIndex * 100 / TotalNum, 2);
+                                        if (proText > ProgressLabTxtLoadingIndex)
+                                            ProgressLabTxtLoadingIndex = proText;
+                                        if (proIndex == TotalNum)
+                                            ProgressLabTxtLoadingIndex = 100;
+                                        m_SyncContext.Post(SetProgressLabTxtLoading, $"{proIndex}/{TotalNum}");
+                                        m_SyncContext.Post(SetProgressPerformStep, "0");
                                     }
-                                    curRichTextDataNum++;
-                                }
+                                }));
                             }
                         }
-                        if (!string.IsNullOrEmpty(resposeHtml) && (curRichTextDataNum > lastAddIndex || lastAddIndex == 1))
+                        if (!string.IsNullOrEmpty(resposeHtml) && curRichTextDataNum > lastAddIndex && lastAddIndex != 1)
                             richTextBoxList2.Add(resposeHtml);
                         newKeys = newKeys.Distinct().ToList();
+                        newKeys2 = new List<string>();
                         newKeys2 = newKeys;
                         pages = richTextBoxList2.Count();
-                        this.textBox3.Text = pages.ToString();
+                        //this.textBox3.Text = pages.ToString();
+                        //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
+                        m_SyncContext.Post(SetTextSafePost, pages);
                     }
                 }
             }
+            this.Invoke(new Action(() =>
+            {
+                this.th2_run.Text = "1";
+            }));
         }
 
         /// <summary>
@@ -576,42 +631,48 @@ namespace SearchTool
                 MessageBox.Show("请先输入要搜索的关键字或点击查重按钮!");
                 return;
             }
-            if (richTextBoxList1.Count() > 0 && richTextBoxList2.Count() == 0)
+            if (isSearch)
             {
-                // 搜索
-                if (textBox2.Text.Equals("1"))
+                if (richTextBoxList1.Count() > 0)
                 {
-                    pageIndex = 1;
-                    MessageBox.Show("已经是第一页了!");
-                    return;
-                }
-                else
-                {
-                    var curPageIndex = Convert.ToInt32(textBox2.Text);
-                    pageIndex = curPageIndex - 1;
-                    var richText = richTextBoxList1.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
-                    richTextBox1.Text = richText;
-                    ChangeKeyColor1();
-                    textBox2.Text = pageIndex.ToString();
+                    // 搜索
+                    if (textBox2.Text.Equals("1"))
+                    {
+                        pageIndex = 1;
+                        MessageBox.Show("已经是第一页了!");
+                        return;
+                    }
+                    else
+                    {
+                        var curPageIndex = Convert.ToInt32(textBox2.Text);
+                        pageIndex = curPageIndex - 1;
+                        var richText = richTextBoxList1.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
+                        richTextBox1.Text = richText;
+                        ChangeKeyColor1();
+                        textBox2.Text = pageIndex.ToString();
+                    }
                 }
             }
-            if (richTextBoxList2.Count() > 0 && richTextBoxList1.Count() == 0)
+            else
             {
-                // 查重
-                if (textBox2.Text.Equals("1"))
+                if (richTextBoxList2.Count() > 0)
                 {
-                    pageIndex = 1;
-                    MessageBox.Show("已经是第一页了!");
-                    return;
-                }
-                else
-                {
-                    var curPageIndex = Convert.ToInt32(textBox2.Text);
-                    pageIndex = curPageIndex - 1;
-                    var richText = richTextBoxList2.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
-                    richTextBox1.Text = richText;
-                    ChangeKeyColor2();
-                    textBox2.Text = pageIndex.ToString();
+                    // 查重
+                    if (textBox2.Text.Equals("1"))
+                    {
+                        pageIndex = 1;
+                        MessageBox.Show("已经是第一页了!");
+                        return;
+                    }
+                    else
+                    {
+                        var curPageIndex = Convert.ToInt32(textBox2.Text);
+                        pageIndex = curPageIndex - 1;
+                        var richText = richTextBoxList2.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
+                        richTextBox1.Text = richText;
+                        ChangeKeyColor2();
+                        textBox2.Text = pageIndex.ToString();
+                    }
                 }
             }
         }
@@ -628,42 +689,48 @@ namespace SearchTool
                 MessageBox.Show("请先输入要搜索的关键字或点击查重按钮!");
                 return;
             }
-            if (richTextBoxList1.Count() > 0 && richTextBoxList2.Count() == 0)
+            if (isSearch)
             {
-                // 搜索
-                if (textBox2.Text.Equals(pages.ToString()))
+                if (richTextBoxList1.Count() > 0)
                 {
-                    pageIndex = pages;
-                    MessageBox.Show("已经是最后一页了!");
-                    return;
-                }
-                else
-                {
-                    var curPageIndex = Convert.ToInt32(textBox2.Text);
-                    pageIndex = curPageIndex + 1;
-                    var richText = richTextBoxList1.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
-                    richTextBox1.Text = richText;
-                    ChangeKeyColor1();
-                    textBox2.Text = pageIndex.ToString();
+                    // 搜索
+                    if (textBox2.Text.Equals(pages.ToString()))
+                    {
+                        pageIndex = pages;
+                        MessageBox.Show("已经是最后一页了!");
+                        return;
+                    }
+                    else
+                    {
+                        var curPageIndex = Convert.ToInt32(textBox2.Text);
+                        pageIndex = curPageIndex + 1;
+                        var richText = richTextBoxList1.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
+                        richTextBox1.Text = richText;
+                        ChangeKeyColor1();
+                        textBox2.Text = pageIndex.ToString();
+                    }
                 }
             }
-            if (richTextBoxList2.Count() > 0 && richTextBoxList1.Count() == 0)
+            else
             {
-                // 查重
-                if (textBox2.Text.Equals(pages.ToString()))
+                if (richTextBoxList2.Count() > 0)
                 {
-                    pageIndex = pages;
-                    MessageBox.Show("已经是最后一页了!");
-                    return;
-                }
-                else
-                {
-                    var curPageIndex = Convert.ToInt32(textBox2.Text);
-                    pageIndex = curPageIndex + 1;
-                    var richText = richTextBoxList2.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
-                    richTextBox1.Text = richText;
-                    ChangeKeyColor2();
-                    textBox2.Text = pageIndex.ToString();
+                    // 查重
+                    if (textBox2.Text.Equals(pages.ToString()))
+                    {
+                        pageIndex = pages;
+                        MessageBox.Show("已经是最后一页了!");
+                        return;
+                    }
+                    else
+                    {
+                        var curPageIndex = Convert.ToInt32(textBox2.Text);
+                        pageIndex = curPageIndex + 1;
+                        var richText = richTextBoxList2.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
+                        richTextBox1.Text = richText;
+                        ChangeKeyColor2();
+                        textBox2.Text = pageIndex.ToString();
+                    }
                 }
             }
         }
@@ -680,25 +747,31 @@ namespace SearchTool
                 MessageBox.Show("请先输入要搜索的关键字或点击查重按钮!");
                 return;
             }
-            if (richTextBoxList1.Count() > 0 && richTextBoxList2.Count() == 0)
+            if (isSearch)
             {
-                // 搜索
-                var curPageIndex = Convert.ToInt32(textBox2.Text);
-                pageIndex = curPageIndex;
-                var richText = richTextBoxList1.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
-                richTextBox1.Text = richText;
-                ChangeKeyColor1();
-                textBox2.Text = pageIndex.ToString();
+                if (richTextBoxList1.Count() > 0)
+                {
+                    // 搜索
+                    var curPageIndex = Convert.ToInt32(textBox2.Text);
+                    pageIndex = curPageIndex;
+                    var richText = richTextBoxList1.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
+                    richTextBox1.Text = richText;
+                    ChangeKeyColor1();
+                    textBox2.Text = pageIndex.ToString();
+                }
             }
-            if (richTextBoxList2.Count() > 0 && richTextBoxList1.Count() == 0)
+            else
             {
-                // 查重
-                var curPageIndex = Convert.ToInt32(textBox2.Text);
-                pageIndex = curPageIndex;
-                var richText = richTextBoxList2.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
-                richTextBox1.Text = richText;
-                ChangeKeyColor2();
-                textBox2.Text = pageIndex.ToString();
+                if (richTextBoxList2.Count() > 0)
+                {
+                    // 查重
+                    var curPageIndex = Convert.ToInt32(textBox2.Text);
+                    pageIndex = curPageIndex;
+                    var richText = richTextBoxList2.Skip(pageIndex - 1).Take(1).FirstOrDefault() ?? String.Empty;
+                    richTextBox1.Text = richText;
+                    ChangeKeyColor2();
+                    textBox2.Text = pageIndex.ToString();
+                }
             }
         }
 
@@ -782,6 +855,64 @@ namespace SearchTool
             {
                 MessageBox.Show("请拖动要识别文字的图片到搜索框");
             }
+        }
+
+        /// <summary>
+        /// 计算查重需要的总数量
+        /// </summary>
+        /// <param name="datasCount"></param>
+        /// <returns></returns>
+        private int GetTotalNum(int datasCount)
+        {
+            var r = 0;
+            if (datasCount > 2)
+            {
+                for (int i = 1; i < datasCount; i++)
+                {
+                    r += datasCount - i;
+                }
+            }
+            return r;
+        }
+
+        /// <summary>
+        /// 跨线程更新富文本
+        /// </summary>
+        /// <param name="text"></param>
+        private void SetRichTextAppendText(object text)
+        {
+            this.richTextBox1.AppendText(text.ToString());
+            this.richTextBox1.Refresh();
+            ChangeKeyColor2(false);
+            this.richTextBox1.Refresh();
+        }
+
+        /// <summary>
+        /// 跨线程更新总页数
+        /// </summary>
+        /// <param name="text"></param>
+        private void SetTextSafePost(object text)
+        {
+            this.textBox3.Text = text.ToString();
+            this.textBox3.Refresh();
+        }
+
+        /// <summary>
+        /// 跨线程更新后台查重进度文本
+        /// </summary>
+        private void SetProgressLabTxtLoading(object text)
+        {
+            this.label3.Text = $"后台查重进度{ProgressLabTxtLoadingIndex}%（{text}）";
+            this.label3.Refresh();
+        }
+
+        /// <summary>
+        /// 跨线程更新进度条
+        /// </summary>
+        /// <param name="text"></param>
+        private void SetProgressPerformStep(object text)
+        {
+            this.progressBar1.PerformStep();
         }
     }
 }
