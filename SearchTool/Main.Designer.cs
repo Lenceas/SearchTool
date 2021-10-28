@@ -306,7 +306,7 @@
             this.MinimizeBox = false;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "搜题工具v1.3 by Lenceas";
+            this.Text = "搜题工具v1.5 by Lenceas";
             this.Load += new System.EventHandler(this.Main_Load);
             this.tabControl1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
