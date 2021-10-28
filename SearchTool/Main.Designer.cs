@@ -119,7 +119,6 @@
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1578, 165);
@@ -286,7 +285,6 @@
             // panel3
             // 
             this.panel3.Controls.Add(this.richTextBox1);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 199);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1578, 945);
