@@ -17,4 +17,3 @@ F:\小工具\搜题工具\SearchTool\SearchTool.Test\obj\Debug\net5.0\SearchTool
 F:\小工具\搜题工具\SearchTool\SearchTool.Test\obj\Debug\net5.0\ref\SearchTool.Test.dll
 F:\小工具\搜题工具\SearchTool\SearchTool.Test\obj\Debug\net5.0\SearchTool.Test.pdb
 F:\小工具\搜题工具\SearchTool\SearchTool.Test\obj\Debug\net5.0\SearchTool.Test.genruntimeconfig.cache
-F:\小工具\搜题工具\SearchTool\SearchTool.Test\obj\Debug\net5.0\SearchTool.Test.csproj.AssemblyReference.cache
