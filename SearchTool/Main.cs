@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -35,8 +36,6 @@ namespace SearchTool
         private int TotalNum = 0;// 查重循环总匹配次数
         private Thread th1;// 搜索线程
         private Thread th2;// 查重线程
-        private int cci = 0;// 查重子线程for循环i起始值
-        private int ccj = 0;// 重置查重子线程for循环j起始值
 
         /// <summary>
         /// 主函数
@@ -119,10 +118,6 @@ namespace SearchTool
             ProgressLabTxtLoadingIndex = 0;
             // 重置后台查重进度文本
             label3.Text = "";
-            // 重置查重子线程for循环i起始值
-            cci = 0;
-            // 重置查重子线程for循环j起始值
-            ccj = 0;
             // 重置搜索或查重结果总条数
             richNum.Text = "搜索或查重结果总条数：0";
         }
@@ -825,13 +820,7 @@ namespace SearchTool
                 }
                 if (p == ".jpg" || p == ".jpeg" || p == ".png" || p == ".bmp")
                 {
-                    var ocrModel = EstateCertOCR.Ocr1(realpath);
-                    var ocrStr = string.Empty;
-                    if (ocrModel.TextDetections.Count() > 0)
-                    {
-                        var keysList = ocrModel.TextDetections.Select(_ => _.DetectedText).Distinct() ?? new List<string>();
-                        ocrStr = string.Join(" ", keysList);
-                    }
+                    var ocrStr = EstateCertOCR.Ocr(realpath);
                     if (!string.IsNullOrEmpty(ocrStr))
                     {
                         textBox1.Text = ocrStr;
@@ -846,9 +835,40 @@ namespace SearchTool
                     MessageBox.Show("暂时只支持识别jgp/jpeg/png/bmp格式的图片");
                 }
             }
+            else if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                var txt = (string)e.Data.GetData(DataFormats.Text);
+                if (!string.IsNullOrEmpty(txt))
+                {
+                    textBox1.Text = txt;
+                }
+            }
+            else if (e.Data.GetDataPresent(DataFormats.Rtf))
+            {
+                var rtf = (string)e.Data.GetData(DataFormats.Rtf);
+                if (!string.IsNullOrEmpty(rtf))
+                {
+                    richTextBox1.Rtf = rtf;
+                    richTextBox1.Copy();
+                    richTextBox1.Rtf = String.Empty;
+                    if (Clipboard.ContainsImage())
+                    {
+                        var imgBase64 = EstateCertOCR.ImgToBase64(new Bitmap(Clipboard.GetImage()));
+                        var ocrStr = EstateCertOCR.Ocr("", true, imgBase64);
+                        if (!string.IsNullOrEmpty(ocrStr))
+                        {
+                            textBox1.Text = ocrStr;
+                        }
+                        else
+                        {
+                            MessageBox.Show("图片中未检测到文本");
+                        }
+                    }
+                }
+            }
             else
             {
-                MessageBox.Show("请拖动要识别文字的图片到搜索框");
+                MessageBox.Show("请拖动或粘贴要识别的文字或图片到搜索框");
             }
         }
 
@@ -908,6 +928,65 @@ namespace SearchTool
         private void SetProgressPerformStep(object text)
         {
             this.progressBar1.PerformStep();
+        }
+
+        /// <summary>
+        /// 搜索输入框按下按键并且释放后事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //[Ctrl+V]
+            if (e.KeyChar == 22)
+            {
+                if (Clipboard.ContainsImage())
+                {
+                    var imgBase64 = EstateCertOCR.ImgToBase64(new Bitmap(Clipboard.GetImage()));
+                    var ocrStr = EstateCertOCR.Ocr("", true, imgBase64);
+                    if (!string.IsNullOrEmpty(ocrStr))
+                    {
+                        textBox1.Text = ocrStr;
+                    }
+                    else
+                    {
+                        MessageBox.Show("图片中未检测到文本");
+                    }
+                }
+                if (Clipboard.ContainsFileDropList())
+                {
+                    // 从拖动数据里得到路径
+                    string realpath = ((Array)Clipboard.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                    if (string.IsNullOrEmpty(realpath))
+                    {
+                        MessageBox.Show("图片路径为空,请重新复制图片");
+                        return;
+                    }
+                    // 文件后缀名
+                    string p = Path.GetExtension(realpath);
+                    if (string.IsNullOrEmpty(p))
+                    {
+                        MessageBox.Show("暂时只支持识别jgp/jpeg/png/bmp格式的图片");
+                        return;
+                    }
+                    if (p == ".jpg" || p == ".jpeg" || p == ".png" || p == ".bmp")
+                    {
+                        var ocrStr = EstateCertOCR.Ocr(realpath);
+                        if (!string.IsNullOrEmpty(ocrStr))
+                        {
+                            textBox1.Text = ocrStr;
+                        }
+                        else
+                        {
+                            MessageBox.Show("图片中未检测到文本");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("暂时只支持识别jgp/jpeg/png/bmp格式的图片");
+                    }
+                }
+            }
         }
     }
 }
