@@ -522,3 +522,4 @@ F:\小工具\搜题工具\SearchTool\SearchTool\bin\Release\net5.0-windows\win-x
 F:\小工具\搜题工具\SearchTool\SearchTool\bin\Release\net5.0-windows\win-x64\Newtonsoft.Json.dll
 F:\小工具\搜题工具\SearchTool\SearchTool\bin\Release\net5.0-windows\win-x64\TencentCloudCommon.dll
 F:\小工具\搜题工具\SearchTool\SearchTool\bin\Release\net5.0-windows\win-x64\TencentCloudOcr.dll
+F:\小工具\搜题工具\SearchTool\SearchTool\obj\Release\net5.0-windows\win-x64\SearchTool.csproj.AssemblyReference.cache

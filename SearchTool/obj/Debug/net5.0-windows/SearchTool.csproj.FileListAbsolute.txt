@@ -26,3 +26,4 @@ F:\小工具\搜题工具\SearchTool\SearchTool\obj\Debug\net5.0-windows\SearchT
 F:\小工具\搜题工具\SearchTool\SearchTool\bin\Debug\net5.0-windows\Newtonsoft.Json.dll
 F:\小工具\搜题工具\SearchTool\SearchTool\bin\Debug\net5.0-windows\TencentCloudCommon.dll
 F:\小工具\搜题工具\SearchTool\SearchTool\bin\Debug\net5.0-windows\TencentCloudOcr.dll
+F:\小工具\搜题工具\SearchTool\SearchTool\obj\Debug\net5.0-windows\SearchTool.csproj.AssemblyReference.cache

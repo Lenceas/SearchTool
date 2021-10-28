@@ -133,10 +133,20 @@ namespace SearchTool
         }
 
         /// <summary>
-        /// 搜索或查重结果总条数赋值
+        /// 搜索结果总条数赋值
         /// </summary>
         /// <param name="pages"></param>
-        private void InitPageTotalNum(object num)
+        private void InitPageTotalNum1(object num)
+        {
+            richNum.Text = $"搜索或查重结果总条数：{num}";
+            richNum.Refresh();
+        }
+        
+        /// <summary>
+        /// 查重结果总条数赋值
+        /// </summary>
+        /// <param name="pages"></param>
+        private void InitPageTotalNum2(object num)
         {
             richNum.Text = $"搜索或查重结果总条数：{curRichTextDataNum}";
             richNum.Refresh();
@@ -278,8 +288,7 @@ namespace SearchTool
                             // 更新总页数
                             pages = newDatas.Count() % pageSize == 0 ? newDatas.Count() / pageSize : newDatas.Count() / pageSize + 1;
                             InitPages(pages);
-                            curRichTextDataNum = newDatas.Count();
-                            InitPageTotalNum(newDatas.Count());
+                            InitPageTotalNum1(newDatas.Count());
                             newDatas = newDatas.Skip((pageIndex - 1) * pageSize).Take(pageSize);
                             var resposeHtml = string.Empty;
                             var splitStr = new string[0];
@@ -558,7 +567,7 @@ namespace SearchTool
                                             sigleResposeHtml += $"============================{Environment.NewLine}{Environment.NewLine}";
                                             if (curRichTextDataNum <= pageSize)
                                                 m_SyncContext.Post(SetRichTextAppendText, sigleResposeHtml);
-                                            m_SyncContext.Post(InitPageTotalNum, curRichTextDataNum);
+                                            m_SyncContext.Post(InitPageTotalNum2, curRichTextDataNum);
                                             if (curRichTextDataNum % pageSize == 0)
                                             {
                                                 richTextBoxList2.Add(resposeHtml);
